@@ -31,22 +31,23 @@ public class Part1 {
         return gene;
     }
 
-    public String getAllGenes(String dna) {
+    public StorageResource getAllGenes(String dna) {
         StorageResource sr = new StorageResource();
         String gene = findGene(dna);
         sr.add(gene);
+        String newDna = dna;
 
         while (!gene.equals("")) {
-            int newStart = dna.indexOf(gene) + gene.length();
-            String newDna = dna.substring(newStart);
+            int newStart = newDna.indexOf(gene) + gene.length();
+            newDna = newDna.substring(newStart);
             gene = findGene(newDna);
             sr.add(gene);
         }
-        String geneList = "";
-        for (String s : sr.data()){
-            geneList = geneList + s;
-        }
-        return geneList;
+//        String geneList = "";
+//        for (String s : sr.data()){
+//            geneList = geneList + s;
+//        }
+        return sr;
     }
 
     public int findStringAinStringB(String stringA, String stringB){
@@ -68,5 +69,47 @@ public class Part1 {
     public int countCTG(String dna){
         int occurrences = findStringAinStringB("CTG", dna);
         return occurrences;
+    }
+
+    public void processGenes(StorageResource sr){
+        //print all the strings in sr longer than 9 characters
+        int count = 0;
+        int cgCount = 0;
+        int longest = 0;
+        for (String s : sr.data()){
+            StorageResource geneList = new StorageResource();
+            geneList = getAllGenes(s);
+            for(String gene : geneList.data()) {
+                System.out.println(gene);
+                if (gene.length() > longest) {
+                    longest = gene.length();
+                }
+                if (gene.length() > 5){
+                    System.out.println(gene);
+                    count ++;
+                }
+                if (cgRatio(gene) > 0.35){
+                    System.out.println("higher than 0.35 = " + gene);
+                    cgCount ++;
+                }
+            }
+        }
+        //print the number of Strings longer than 9 characters
+        System.out.println("number of genes  = " + count);
+
+        //print strings whose CG ratio is higher than 0.35
+        System.out.println("number of genes higher than 0.35 = " + cgCount);
+        //print the length of the longest gene
+        System.out.println("longest gene has = " + longest + ("characters"));
+
+    }
+
+    public static void main(String[] args){
+        StorageResource testSR = new StorageResource();
+
+        String testDna = "";
+        testSR.add(testDna.toUpperCase());
+        Part1 part1 = new Part1();
+        part1.processGenes(testSR);
     }
 }
